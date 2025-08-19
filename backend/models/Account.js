@@ -1,3 +1,4 @@
+// backend/models/Account.js
 const mongoose = require('mongoose');
 
 const accountSchema = new mongoose.Schema({
@@ -22,6 +23,7 @@ const accountSchema = new mongoose.Schema({
     type: String,
     enum: ['USD', 'EUR', 'AZN'],
     required: true,
+    default: 'USD',
   },
   balance: {
     type: Number,

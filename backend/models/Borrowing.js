@@ -6,6 +6,8 @@ const borrowingSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  currency: { type: String, enum: ['USD', 'AZN'], default: 'USD' }
+,
   type: {
     type: String,
     enum: ['lent', 'borrowed'],

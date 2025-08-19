@@ -37,12 +37,17 @@ router.post('/', auth, async (req, res) => {
   try {
     const { accountId, type, category, amount, currency, description, date } = req.body;
     
-    const account = await Account.findOne({ _id: accountId, user: req.userId });
+    // Get account to verify currency
+    const account = await Account.findById(accountId);
     if (!account) {
       return res.status(404).json({ error: 'Account not found' });
     }
-
-    const amountInUSD = convertToUSD(amount, currency || account.currency);
+    
+    // Use transaction currency or fall back to account currency
+    const transactionCurrency = currency || account.currency;
+    
+    // Calculate USD equivalent
+    const amountInUSD = convertToUSD(amount, transactionCurrency);
     
     const transaction = new Transaction({
       user: req.userId,
@@ -50,23 +55,23 @@ router.post('/', auth, async (req, res) => {
       type,
       category,
       amount,
-      originalAmount: amount,
-      originalCurrency: currency || account.currency,
+      currency: transactionCurrency,
       amountInUSD,
       description,
       date: new Date(date),
     });
-
+    
     await transaction.save();
-
+    
     // Update account balance
     if (type === 'income') {
       account.balance += amount;
     } else if (type === 'expense') {
       account.balance -= amount;
     }
+    
     await account.save();
-
+    
     res.json(transaction);
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+// backend/models/Transaction.js
 const transactionSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,11 +23,7 @@ const transactionSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  originalAmount: {
-    type: Number,
-    required: true,
-  },
-  originalCurrency: {
+  currency: {
     type: String,
     enum: ['USD', 'EUR', 'AZN'],
     required: true,
@@ -47,5 +42,3 @@ const transactionSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
-module.exports = mongoose.model('Transaction', transactionSchema);
